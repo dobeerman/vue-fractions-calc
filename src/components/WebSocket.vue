@@ -25,12 +25,14 @@
                     avatar
                     :key="comment.title"
                   >
-                    <!-- @click="sendMessage(idx)" -->
                     <v-list-tile-avatar>
                       <img :src="comment.avatar">
                     </v-list-tile-avatar>
+
                     <v-list-tile-content>
-                      <v-list-tile-title v-html="comment.name"></v-list-tile-title>
+                      <v-list-tile-title
+                        v-html="comment.name"
+                      ></v-list-tile-title>
                       <v-list-tile-sub-title
                         v-if="comment.quote"
                         v-html="comment.quote"
@@ -40,11 +42,13 @@
                         v-html="comment.comment"
                       ></v-list-tile-sub-title>
                     </v-list-tile-content>
+
                     <v-list-tile-action>
                       <v-btn icon ripple @click="removeMessage(comment.id)">
                         <v-icon color="grey lighten-1">cancel</v-icon>
                       </v-btn>
                     </v-list-tile-action>
+
                   </v-list-tile>
                   <v-divider
                     v-if="idx < comments.length - 1"
@@ -53,8 +57,7 @@
                   ></v-divider>
                 </template>
               </v-list>
-              <v-card-text>
-              </v-card-text>
+
               <v-card-actions>
                 <v-text-field
                   v-if="!isNamed"
@@ -84,6 +87,8 @@
 </template>
 
 <script>
+import short from 'short-uuid';
+
 export default {
   name: 'WebSocket',
 
@@ -139,7 +144,7 @@ export default {
       }
 
       const comment = {
-        id: this.comments.length + 1,
+        id: short.uuid(),
         name: this.name,
         comment: this.comment,
       };
@@ -158,12 +163,12 @@ export default {
       rand = Math.round(rand);
 
       if (rand > 1) {
-        Object.assign(comment, {
-          quote: comment.comment,
-          comment: `ID: ${comment.id}`,
-        });
-
         setTimeout(() => {
+          Object.assign(comment, {
+            id: short.uuid(),
+            quote: comment.comment,
+            comment: `Reply to ID: ${comment.id}`,
+          });
           this.ws.send(JSON.stringify(comment));
         }, rand * 1000);
       }
@@ -188,9 +193,12 @@ export default {
         return;
       }
 
-      Object.assign(comment, { avatar: `https://avatars.io/twitter/${comment.name}` });
+      Object.assign(comment, {
+        avatar: `https://avatars.io/twitter/${comment.name}`,
+      });
 
       this.comments.push(comment);
+      this.commentsId.scrollTop = this.commentsId.scrollHeight + 500;
     },
     // eslint-disable-next-line no-unused-vars
     onError(evt) {
@@ -201,7 +209,7 @@ export default {
   watch: {
     comments: {
       handler() {
-        this.commentsId.scrollTop = this.commentsId.scrollHeight + 500;
+        // this.commentsId.scrollTop = this.commentsId.scrollHeight + 500;
       },
       deep: true,
     },
