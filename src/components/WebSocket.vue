@@ -107,6 +107,10 @@ export default {
     };
   },
 
+  beforeDestroy() {
+    this.ws.close();
+  },
+
   methods: {
     setName() {
       this.isNamed = true;
