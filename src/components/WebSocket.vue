@@ -4,17 +4,13 @@
       <v-flex xs12>
         <v-layout row>
           <v-flex xs12 sm6 offset-sm3>
-            <v-card>
+            <v-card height="auto">
               <v-toolbar color="cyan" dark>
-                <v-toolbar-side-icon></v-toolbar-side-icon>
                 <v-toolbar-title v-if="!isNamed">Comments</v-toolbar-title>
                 <v-toolbar-title v-else>{{ name }}'s comments </v-toolbar-title>
-                <v-spacer></v-spacer>
-                <v-btn icon>
-                  <v-icon>search</v-icon>
-                </v-btn>
               </v-toolbar>
-              <v-list three-line>
+
+              <v-list three-line class="comments-list" id="comments">
                 <template v-for="(comment, idx) in comments">
                   <v-subheader v-if="comment.system" :key="idx">
                     {{ comment.system }}
@@ -30,7 +26,14 @@
                     </v-list-tile-avatar>
                     <v-list-tile-content>
                       <v-list-tile-title v-html="comment.name"></v-list-tile-title>
-                      <v-list-tile-sub-title v-html="comment.comment"></v-list-tile-sub-title>
+                      <v-list-tile-sub-title
+                        v-if="comment.quote"
+                        v-html="comment.quote"
+                        class="quote"
+                      ></v-list-tile-sub-title>
+                      <v-list-tile-sub-title
+                        v-html="comment.comment"
+                      ></v-list-tile-sub-title>
                     </v-list-tile-content>
                     <v-list-tile-action>
                       <v-btn icon ripple @click="removeMessage(comment.id)">
@@ -46,11 +49,14 @@
                 </template>
               </v-list>
               <v-card-text>
+              </v-card-text>
+              <v-card-actions>
                 <v-text-field
                   v-if="!isNamed"
                   name="name"
                   label="Name"
                   id="name"
+                  solo-inverted
                   v-model="name"
                   @keyup.13="setName"
                 ></v-text-field>
@@ -63,7 +69,7 @@
                   v-model="comment"
                   @keyup.13="sendMessage"
                 ></v-text-field>
-              </v-card-text>
+              </v-card-actions>
             </v-card>
           </v-flex>
         </v-layout>
@@ -86,6 +92,8 @@ export default {
       comment: '',
 
       comments: [],
+
+      commentsId: null,
     };
   },
 
@@ -107,6 +115,10 @@ export default {
     };
   },
 
+  mounted() {
+    this.commentsId = document.getElementById('comments');
+  },
+
   beforeDestroy() {
     this.ws.close();
   },
@@ -121,14 +133,35 @@ export default {
         return;
       }
 
-      this.ws.send(
-        JSON.stringify({
-          id: this.comments.length + 1,
-          name: this.name,
-          comment: this.comment,
-        }),
-      );
+      const comment = {
+        id: this.comments.length + 1,
+        name: this.name,
+        comment: this.comment,
+      };
+
+      this.ws.send(JSON.stringify(comment));
+
+      this.sendAnswer(comment);
+
       this.comment = '';
+    },
+
+    sendAnswer(comment) {
+      const [min, max] = [0, 3];
+      // eslint-disable-next-line no-mixed-operators
+      let rand = min - 0.5 + Math.random() * (max - min + 1);
+      rand = Math.round(rand);
+
+      if (rand > 1) {
+        Object.assign(comment, {
+          quote: comment.comment,
+          comment: `ID: ${comment.id}`,
+        });
+
+        setTimeout(() => {
+          this.ws.send(JSON.stringify(comment));
+        }, rand * 1000);
+      }
     },
 
     removeMessage(id) {
@@ -159,11 +192,28 @@ export default {
       this.comments.push({ system: 'ERROR' });
     },
   },
+
+  watch: {
+    comments: {
+      handler() {
+        this.commentsId.scrollTop = this.commentsId.scrollHeight + 500;
+      },
+      deep: true,
+    },
+  },
 };
 </script>
 
 <style scoped>
 .toolbar__title {
   color: white;
+}
+.comments-list {
+  height: 400px;
+  overflow-y: scroll;
+}
+.quote {
+  background: lightgrey;
+  font-style: italic;
 }
 </style>
