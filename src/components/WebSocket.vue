@@ -207,15 +207,6 @@ export default {
       this.comments.push({ system: 'ERROR' });
     },
   },
-
-  watch: {
-    comments: {
-      handler() {
-        // this.commentsId.scrollTop = this.commentsId.scrollHeight + 500;
-      },
-      deep: true,
-    },
-  },
 };
 </script>
 
