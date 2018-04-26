@@ -136,6 +136,7 @@ export default {
   methods: {
     setName() {
       this.isNamed = true;
+      this.name = this.name.replace(/[^\w]/g, '');
     },
 
     sendMessage() {
@@ -164,12 +165,13 @@ export default {
 
       if (rand > 1) {
         setTimeout(() => {
-          Object.assign(comment, {
+          const reply = {
             id: short.uuid(),
+            name: 'John',
             quote: comment.comment,
             comment: `Reply to ID: ${comment.id}`,
-          });
-          this.ws.send(JSON.stringify(comment));
+          };
+          this.ws.send(JSON.stringify(reply));
         }, rand * 1000);
       }
     },
