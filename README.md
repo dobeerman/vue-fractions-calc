@@ -1,10 +1,10 @@
-# calc
+# Fractional calc & Simple WebSocket implementation
 
-> A Vue.js project
+> Test Vue.js project
 
 ## Build Setup
 
-``` bash
+```bash
 # install dependencies
 npm install
 
@@ -19,3 +19,10 @@ npm run build --report
 ```
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+
+# Used libraries
+
+* [vuetify](https://github.com/vuetifyjs/vuetify) - Material Component Framework for Vue.js 2
+* [vue-router](https://github.com/vuejs/vue-router) - The official router for Vue.js
+* [fractional](https://github.com/ekg/fraction.js) - A fraction math library in javascript
+* [short-uuid](https://github.com/oculus42/short-uuid) - Translate standard UUIDs into shorter formats and back
