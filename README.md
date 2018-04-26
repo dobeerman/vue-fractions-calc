@@ -20,7 +20,7 @@ npm run build --report
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
 
-# Used libraries
+## Used libraries
 
 * [vuetify](https://github.com/vuetifyjs/vuetify) - Material Component Framework for Vue.js 2
 * [vue-router](https://github.com/vuejs/vue-router) - The official router for Vue.js
